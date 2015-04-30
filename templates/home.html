@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="starter-template">
+        <h1>Search for Torrents</h1>
+        <div class="row">
+            <div class="col-md-offset-4 col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            	<form action="/search" method="post" role="form">
+
+        	        <div class="form-group">
+        	        	<label for=""></label>
+        	        	<input type="text" class="form-control" name="query" id="" placeholder="Enter your search query">
+        	        </div>
+
+        	        <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
