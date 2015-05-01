@@ -2,12 +2,13 @@
 
 {% block content %}
     <div class="row">
-    	<h4><strong>{{ extra_torrent.total }}</strong> torrents found</h4>
+    	<h4><strong>{{ total }}</strong> torrents found</h4>
     </div>
     <div class="row">
     	<table class="table table-hover">
     	<thead>
     		<tr>
+                <th>Source</th>
     			<th>Title</th>
                 <th>Link</th>
                 <th>Size</th>
@@ -16,8 +17,9 @@
     		</tr>
     	</thead>
     	<tbody>
-            {% for row in extra_torrent.results %}
+            {% for row in torrents %}
     		<tr>
+                <td>{{ row.source }}</td>
     			<td>{{ row.title }}</td>
                 <td><a href="{{ row.url }}">Download</a></td>
                 <td>{{ row.size }}</td>

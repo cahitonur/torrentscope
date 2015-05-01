@@ -21,8 +21,14 @@ def search():
             query = "+".join(query_list)
 
         extra_torrent = search_extra_torrent(query)
+        pirate_bay = search_piratebay(query)
 
-        return render_template('results.html', extra_torrent=extra_torrent)
+        total = extra_torrent['total'] + pirate_bay['total']
+        torrents = extra_torrent['results'] + pirate_bay['results']
+
+        torrents.sort(key=lambda x: x.seeders, reverse=True)
+
+        return render_template('results.html', total=total, torrents=torrents)
     else:
         return redirect('/')
 
@@ -38,7 +44,7 @@ def search_extra_torrent(query):
         all_rows = r_rows + z_rows
 
         for row in all_rows:
-            torrent = Torrent()
+            torrent = Torrent(source='ExtraTorrent')
             attributes = row.find_all('a')[0].attrs
             torrent.title = attributes['title']
             download_link = attributes['href'].replace('torrent_download', 'download')
@@ -57,13 +63,35 @@ def search_extra_torrent(query):
                 torrent.leechers = 0
 
             results.append(torrent)
-            results.sort(key=lambda x: x.seeders, reverse=True)
 
     return {'total': total, 'results': results}
 
 
 def search_piratebay(query):
-    pass
+    html = requests.get('https://thepiratebay.se/search/' + query)
+    soup = BeautifulSoup(html.content)
+    total_phrase = soup.find_all('h2')[0].contents[1].strip()
+    results = []
+    if total_phrase.startswith('No hits'):
+        total = 0
+    else:
+        total = [int(s) for s in total_phrase.split() if s.isdigit()][-1]
+
+    if total > 0:
+        rows = soup.find_all('tr')[1:]
+
+        for row in rows:
+            torrent = Torrent(source='Pirate Bay')
+            td = row.find_all('td')
+            torrent.title = td[1].find('a').text
+            torrent.url = td[1].find_all('a')[1].attrs['href']
+            torrent.seeders = int(td[2].text)
+            torrent.leechers = int(td[3].text)
+            torrent.size = td[1].find('font').text.split(',')[1].replace(' Size ', '')
+
+            results.append(torrent)
+
+    return {'total': total, 'results': results}
 
 
 if __name__ == '__main__':
