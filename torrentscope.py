@@ -46,7 +46,10 @@ def search_extra_torrent(query):
         for row in all_rows:
             torrent = Torrent(source='ExtraTorrent')
             attributes = row.find_all('a')[0].attrs
-            torrent.title = attributes['title']
+            title = attributes['title'].split()
+            title.pop(0)
+            title.pop()
+            torrent.title = " ".join(title)
             download_link = attributes['href'].replace('torrent_download', 'download')
             torrent.url = 'http://extratorrent.cc' + download_link
 
@@ -63,6 +66,9 @@ def search_extra_torrent(query):
                 torrent.leechers = 0
 
             results.append(torrent)
+
+        if total > 50:
+            total = 50
 
     return {'total': total, 'results': results}
 
@@ -91,8 +97,11 @@ def search_piratebay(query):
 
             results.append(torrent)
 
+    if total > 30:
+        total = 30
+
     return {'total': total, 'results': results}
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

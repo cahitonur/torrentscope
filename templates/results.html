@@ -2,7 +2,19 @@
 
 {% block content %}
     <div class="row">
-    	<h4><strong>{{ total }}</strong> torrents found</h4>
+        <div class="col-lg-3">
+    	    <h4><strong>{{ total }}</strong> torrents found</h4>
+        </div>
+        <div class="col-lg-offset-6 col-lg-3">
+            <form class="form-inline" action="/search" method="post" role="form">
+        	        <div class="form-group">
+        	        	<label for=""></label>
+        	        	<input type="text" class="form-control" name="query" id="" placeholder="Search again">
+        	        </div>
+
+        	        <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+        </div>
     </div>
     <div class="row">
     	<table class="table table-hover">
